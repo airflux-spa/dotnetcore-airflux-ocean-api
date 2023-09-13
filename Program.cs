@@ -1,5 +1,9 @@
-using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
@@ -25,7 +29,25 @@ app.Run();
 
 static async Task<IResult> GetAllTodos(TodoDb db)
 {
-    return TypedResults.Ok(await db.Todos.Select(x => new TodoItemDTO{
+    var cutoffTime = DateTime.Now.AddMinutes(-20); // Calcula el tiempo límite hace 20 minutos
+
+    var idsEntradasMasAntiguas = await db.Todos
+        .Where(entry => entry.Datet <= cutoffTime)
+        .Select(entry => entry.Id) // Proyecta solo el ID
+        .ToListAsync();
+    
+    // borra las entradas antiguas
+    foreach (var id in idsEntradasMasAntiguas)
+    {
+        if (await db.Todos.FindAsync(id) is Todo todo)
+        {
+            db.Todos.Remove(todo);
+            await db.SaveChangesAsync();
+        }
+    }
+
+    return TypedResults.Ok(await db.Todos.Select(x => new TodoItemDTO
+    {
         Id = x.Id,
         Lat = x.Lat,
         Lon = x.Lon,
@@ -55,7 +77,7 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
             Lat = todoItemDTO.Lat,
             Lon = todoItemDTO.Lon,
             Aqi = todoItemDTO.Aqi,
-            Datet = todoItemDTO.Datet
+            Datet = todoItemDTO.Datet,
         };
 
         db.Todos.Add(todoItem);
@@ -72,7 +94,6 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
         todo.Lon = todoItemDTO.Lon;
         todo.Aqi = todoItemDTO.Aqi;
         todo.Datet = todoItemDTO.Datet;
-
 
         await db.SaveChangesAsync();
 
@@ -92,3 +113,4 @@ static async Task<IResult> DeleteTodo(int id, TodoDb db)
 
     return TypedResults.NotFound();
 }
+

@@ -4,7 +4,7 @@ public class Todo
     public string? Lat { get; set; }
     public string? Lon { get; set; }
     public int? Aqi { get; set; }
-    public string? Datet { get; set; }
+    public DateTime? Datet { get; set; }
     public string? Secret { get; set; }
 
 }
