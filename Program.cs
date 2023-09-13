@@ -19,8 +19,10 @@ var app = builder.Build();
 app.UseMiddleware<ApiKeyMiddleware>();
 
 RouteGroupBuilder todoItems = app.MapGroup("/todoitems");
+RouteGroupBuilder todoItems2 = app.MapGroup("/todoitems2");
 
 todoItems.MapGet("/", GetAllTodos);
+todoItems2.MapGet("/", GetAllTodoswtime);
 todoItems.MapGet("/{id}", GetTodo);
 todoItems.MapPut("/{id}", UpdateTodo);
 todoItems.MapDelete("/{id}", DeleteTodo);
@@ -35,7 +37,7 @@ static async Task<IResult> GetAllTodos(TodoDb db)
         .Where(entry => entry.Datet <= cutoffTime)
         .Select(entry => entry.Id) // Proyecta solo el ID
         .ToListAsync();
-    
+
     // borra las entradas antiguas
     foreach (var id in idsEntradasMasAntiguas)
     {
@@ -53,6 +55,12 @@ static async Task<IResult> GetAllTodos(TodoDb db)
         Lon = x.Lon,
         Aqi = x.Aqi,
     }).ToArrayAsync());
+}
+
+
+static async Task<IResult> GetAllTodoswtime(TodoDb db)
+{
+    return TypedResults.Ok(await db.Todos.Select(x => new TodoItemDTO(x)).ToArrayAsync());
 }
 
 
