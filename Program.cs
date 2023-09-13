@@ -1,9 +1,14 @@
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
-
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.Configure<JsonOptions>(options =>
+{
+    // Set this to true to ignore null or default values
+    options.SerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+});
 var app = builder.Build();
 
 //our custom middleware extension to call UseMiddleware
@@ -20,7 +25,12 @@ app.Run();
 
 static async Task<IResult> GetAllTodos(TodoDb db)
 {
-    return TypedResults.Ok(await db.Todos.Select(x => new TodoItemDTO(x)).ToArrayAsync());
+    return TypedResults.Ok(await db.Todos.Select(x => new TodoItemDTO{
+        Id = x.Id,
+        Lat = x.Lat,
+        Lon = x.Lon,
+        Aqi = x.Aqi,
+    }).ToArrayAsync());
 }
 
 
@@ -42,9 +52,10 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
         var todoItem = new Todo
         {
             Id = todoItemDTO.Id,
-            lat = todoItemDTO.lat,
-            lon = todoItemDTO.lon,
-            aqi = todoItemDTO.aqi
+            Lat = todoItemDTO.Lat,
+            Lon = todoItemDTO.Lon,
+            Aqi = todoItemDTO.Aqi,
+            Datet = todoItemDTO.Datet
         };
 
         db.Todos.Add(todoItem);
@@ -57,9 +68,10 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
     else
     {
         todo.Id = todoItemDTO.Id;
-        todo.lat = todoItemDTO.lat;
-        todo.lon = todoItemDTO.lon;
-        todo.aqi = todoItemDTO.aqi;
+        todo.Lat = todoItemDTO.Lat;
+        todo.Lon = todoItemDTO.Lon;
+        todo.Aqi = todoItemDTO.Aqi;
+        todo.Datet = todoItemDTO.Datet;
 
 
         await db.SaveChangesAsync();
