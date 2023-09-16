@@ -17,16 +17,21 @@ app.UseMiddleware<ApiKeyMiddleware>();
 
 RouteGroupBuilder todoItems = app.MapGroup("/todoitems");
 RouteGroupBuilder todoItems2 = app.MapGroup("/todoitems2");
+RouteGroupBuilder interior = app.MapGroup("/interior");
+RouteGroupBuilder exterior = app.MapGroup("/exterior");
 
-todoItems.MapGet("/", GetAllTodos);
-todoItems2.MapGet("/", GetAllTodoswtime);
+todoItems.MapGet("/", GetExterior);
 todoItems.MapGet("/{id}", GetTodo);
 todoItems.MapPost("/{id}", UpdateTodo);
 todoItems.MapDelete("/{id}", DeleteTodo);
 
+todoItems2.MapGet("/", GetAllTodoswtime);
+interior.MapGet("/", GetInterior);
+exterior.MapGet("/", GetExterior);
+
 app.Run();
 
-static async Task<IResult> GetAllTodos(TodoDb db)
+static async Task<IResult> GetExterior(TodoDb db)
 {
     var cutoffTime = DateTime.Now.AddMinutes(-20); // Calcula el tiempo límite hace 20 minutos
 
@@ -45,7 +50,10 @@ static async Task<IResult> GetAllTodos(TodoDb db)
         }
     }
 
-    return TypedResults.Ok(await db.Todos.Select(x => new TodoItemDTO
+    // Solo lista nodos exteriores
+    return TypedResults.Ok(await db.Todos
+    .Where(x => x.Env != null && x.Env == 0) // Filtrar por Id > 1
+    .Select(x => new TodoItemDTO
     {
         Id = x.Id,
         Lat = x.Lat,
@@ -58,6 +66,38 @@ static async Task<IResult> GetAllTodos(TodoDb db)
 static async Task<IResult> GetAllTodoswtime(TodoDb db)
 {
     return TypedResults.Ok(await db.Todos.Select(x => new TodoItemDTO(x)).ToArrayAsync());
+}
+
+
+static async Task<IResult> GetInterior(TodoDb db)
+{
+    var cutoffTime = DateTime.Now.AddMinutes(-20); // Calcula el tiempo límite hace 20 minutos
+
+    var idsEntradasMasAntiguas = await db.Todos
+        .Where(entry => entry.Datet <= cutoffTime)
+        .Select(entry => entry.Id) // Proyecta solo el ID
+        .ToListAsync();
+
+    // borra las entradas antiguas
+    foreach (var id in idsEntradasMasAntiguas)
+    {
+        if (await db.Todos.FindAsync(id) is Todo todo)
+        {
+            db.Todos.Remove(todo);
+            await db.SaveChangesAsync();
+        }
+    }
+
+    // Solo lista nodos exteriores
+    return TypedResults.Ok(await db.Todos
+    .Where(x => x.Env != null && x.Env == 1) // Filtrar por Id > 1
+    .Select(x => new TodoItemDTO
+    {
+        Id = x.Id,
+        Lat = x.Lat,
+        Lon = x.Lon,
+        Aqi = x.Aqi,
+    }).ToArrayAsync());
 }
 
 
@@ -81,6 +121,7 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
             Id = todoItemDTO.Id,
             Lat = todoItemDTO.Lat,
             Lon = todoItemDTO.Lon,
+            Env = todoItemDTO.Env,
             Aqi = todoItemDTO.Aqi,
             Datet = todoItemDTO.Datet,
         };
@@ -97,6 +138,7 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
         todo.Id = todoItemDTO.Id;
         todo.Lat = todoItemDTO.Lat;
         todo.Lon = todoItemDTO.Lon;
+        todo.Env = todoItemDTO.Env;
         todo.Aqi = todoItemDTO.Aqi;
         todo.Datet = todoItemDTO.Datet;
 
