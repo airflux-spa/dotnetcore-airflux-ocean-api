@@ -30,3 +30,17 @@ C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net
 C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\obj\Debug\net7.0\TodoApi.csproj.AssemblyReference.cache
 C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\obj\Debug\net7.0\TodoApi.csproj.CopyComplete
+C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net7.0\DotNetty.Buffers.dll
+C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net7.0\DotNetty.Codecs.dll
+C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net7.0\DotNetty.Codecs.Mqtt.dll
+C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net7.0\DotNetty.Common.dll
+C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net7.0\DotNetty.Handlers.dll
+C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net7.0\DotNetty.Transport.dll
+C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net7.0\Microsoft.Azure.Amqp.dll
+C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net7.0\Microsoft.Azure.Devices.Client.dll
+C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net7.0\Microsoft.Azure.Devices.Shared.dll
+C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net7.0\System.Configuration.ConfigurationManager.dll
+C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net7.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net7.0\Microsoft.WindowsAzure.Storage.dll
+C:\Users\intel-nuc2\OneDrive\Documentos\airFlux\VisualCode\TodoApi\bin\Debug\net7.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll

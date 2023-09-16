@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Json;
+using System.Text;
+using Microsoft.Azure.Devices.Client;
+using Newtonsoft.Json;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -114,14 +117,56 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
 {
     var todo = await db.Todos.FindAsync(todoItemDTO.Id);
 
+    if (todoItemDTO.Env == 1)
+    {
+
+        string iotHubHostName = "sensornode.azure-devices.net";
+        string deviceKey = "bK/qAweezaShYN6m816D8LU060lJan6b9hrx1FgKxSk=";
+        var deviceAuthentication = new DeviceAuthenticationWithRegistrySymmetricKey(todoItemDTO.Deviceid, deviceKey);
+
+        DeviceClient deviceClient = DeviceClient.Create(iotHubHostName, deviceAuthentication, TransportType.Mqtt);
+
+
+        var telemetryDataPoint = new
+        {
+            ID = todoItemDTO.Id,
+            datetime = todoItemDTO.Datet,
+            Lat = todoItemDTO.Lat, // Mantener el mismo nombre
+            Lon = todoItemDTO.Lon, // Mantener el mismo nombre
+            Env = todoItemDTO.Env, // Mantener el mismo nombre
+            Temp = todoItemDTO.Tem,
+            Press = todoItemDTO.Pre,
+            RH = todoItemDTO.Hum,
+            PM10 = todoItemDTO.Pm10,
+            PM25 = todoItemDTO.Pm25,
+            Riesgo = (byte)0
+        };
+
+        string messageString = JsonConvert.SerializeObject(telemetryDataPoint);
+        Message message = new Message(Encoding.ASCII.GetBytes(messageString));
+
+        await deviceClient.SendEventAsync(message);
+        Console.WriteLine("{0} > Sending message: {1}", DateTime.Now, messageString);
+
+        await deviceClient.CloseAsync();
+
+    }
+
     if (todo is null)
     {
         var todoItem = new Todo
         {
             Id = todoItemDTO.Id,
+            Deviceid = todoItemDTO.Deviceid,
             Lat = todoItemDTO.Lat,
             Lon = todoItemDTO.Lon,
             Env = todoItemDTO.Env,
+            Tem = todoItemDTO.Tem,
+            Pre = todoItemDTO.Pre,
+            Hum = todoItemDTO.Hum,
+            Pm10 = todoItemDTO.Pm10,
+            Pm25 = todoItemDTO.Pm25,
+            Riesgo = todoItemDTO.Riesgo,
             Aqi = todoItemDTO.Aqi,
             Datet = todoItemDTO.Datet,
         };
@@ -136,9 +181,16 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
     else
     {
         todo.Id = todoItemDTO.Id;
+        todo.Deviceid = todoItemDTO.Deviceid;
         todo.Lat = todoItemDTO.Lat;
         todo.Lon = todoItemDTO.Lon;
         todo.Env = todoItemDTO.Env;
+        todo.Tem = todoItemDTO.Tem;
+        todo.Pre = todoItemDTO.Pre;
+        todo.Hum = todoItemDTO.Hum;
+        todo.Pm10 = todoItemDTO.Pm10;
+        todo.Pm25 = todoItemDTO.Pm25;
+        todo.Riesgo = todoItemDTO.Riesgo;
         todo.Aqi = todoItemDTO.Aqi;
         todo.Datet = todoItemDTO.Datet;
 
