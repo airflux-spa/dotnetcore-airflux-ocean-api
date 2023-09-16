@@ -1,9 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
@@ -24,7 +21,7 @@ RouteGroupBuilder todoItems2 = app.MapGroup("/todoitems2");
 todoItems.MapGet("/", GetAllTodos);
 todoItems2.MapGet("/", GetAllTodoswtime);
 todoItems.MapGet("/{id}", GetTodo);
-todoItems.MapPut("/{id}", UpdateTodo);
+todoItems.MapPost("/{id}", UpdateTodo);
 todoItems.MapDelete("/{id}", DeleteTodo);
 
 app.Run();
