@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.Json;
 using System.Text;
 using Microsoft.Azure.Devices.Client;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ builder.Services.Configure<JsonOptions>(options =>
     // Set this to true to ignore null or default values
     options.SerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
 });
+builder.Services.AddHttpClient();
 var app = builder.Build();
 
 //our custom middleware extension to call UseMiddleware
@@ -113,7 +115,7 @@ static async Task<IResult> GetTodo(int id, TodoDb db)
 }
 
 
-static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db)
+static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db, HttpContext context)
 {
     var todo = await db.Todos.FindAsync(todoItemDTO.Id);
 
@@ -149,8 +151,53 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
         Console.WriteLine("{0} > Sending message: {1}", DateTime.Now, messageString);
 
         await deviceClient.CloseAsync();
+    }
+
+    if (todoItemDTO.Env == 1 && todoItemDTO.Tskey != null)
+    {
+        var httpClient = context.RequestServices.GetRequiredService<IHttpClientFactory>().CreateClient();
+
+        // Preparar los datos que deseas enviar en la solicitud POST
+
+        var requestData = new
+        {
+            api_key = todoItemDTO.Tskey,
+            field1 = todoItemDTO.Tem,
+            field2 = todoItemDTO.Pre,
+            field3 = todoItemDTO.Hum,
+            field4 = todoItemDTO.Pm10,
+            field5 = todoItemDTO.Pm25,
+            created_at = todoItemDTO.Datet,
+            latitude = todoItemDTO.Lat,
+            longitude = todoItemDTO.Lon,
+            status = (todoItemDTO.Env == 0) ? "exterior" : "interior"
+        };
+
+        // Serializa los datos en formato JSON
+        var requestDataJson = JsonConvert.SerializeObject(requestData);
+
+        // Configura las opciones de la solicitud HTTP
+        var requestContent = new StringContent(requestDataJson, Encoding.UTF8, "application/json");
+        var response = await httpClient.PostAsync("https://api.thingspeak.com/update.json", requestContent);
+
+        if (response.IsSuccessStatusCode)
+        {
+            // Si la solicitud fue exitosa, puedes manejar la respuesta aquí
+            var responseContent = await response.Content.ReadAsStringAsync();
+            context.Response.StatusCode = 200; // OK
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync(responseContent);
+        }
+        else
+        {
+            // Si la solicitud falló, puedes manejar el error aquí
+            context.Response.StatusCode = (int)response.StatusCode;
+            await context.Response.WriteAsync("Error en la solicitud a la API externa");
+        }
 
     }
+
+
 
     if (todo is null)
     {
@@ -158,6 +205,7 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
         {
             Id = todoItemDTO.Id,
             Deviceid = todoItemDTO.Deviceid,
+            Tskey = todoItemDTO.Tskey,
             Lat = todoItemDTO.Lat,
             Lon = todoItemDTO.Lon,
             Env = todoItemDTO.Env,
@@ -182,6 +230,7 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
     {
         todo.Id = todoItemDTO.Id;
         todo.Deviceid = todoItemDTO.Deviceid;
+        todo.Tskey = todoItemDTO.Tskey;
         todo.Lat = todoItemDTO.Lat;
         todo.Lon = todoItemDTO.Lon;
         todo.Env = todoItemDTO.Env;

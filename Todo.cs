@@ -2,6 +2,7 @@ public class Todo
 {
     public int Id { get; set; }
     public string? Deviceid { get; set; }
+    public string? Tskey { get; set; }
     public string? Lat { get; set; }
     public string? Lon { get; set; }
     public byte? Env { get; set; }
