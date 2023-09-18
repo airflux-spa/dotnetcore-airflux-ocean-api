@@ -119,7 +119,7 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
 {
     var todo = await db.Todos.FindAsync(todoItemDTO.Id);
 
-    if (todoItemDTO.Env == 1)
+    if (todoItemDTO.Env == 1 && todoItemDTO.Tskey != null)
     {
 
         string iotHubHostName = "sensornode.azure-devices.net";
