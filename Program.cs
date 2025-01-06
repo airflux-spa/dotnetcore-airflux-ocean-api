@@ -154,7 +154,7 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
         todo.Id = todoItemDTO.Id;
         todo.Deviceid = todoItemDTO.Deviceid;
         todo.Tskey = todoItemDTO.Tskey;
-        todo.TsChannel = todoItemDTO.Tschannel;
+        todo.Tschannel = todoItemDTO.Tschannel;
         todo.Apikey = todoItemDTO.Apikey;
         todo.Lat = todoItemDTO.Lat;
         todo.Lon = todoItemDTO.Lon;
