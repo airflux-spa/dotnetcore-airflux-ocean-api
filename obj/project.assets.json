@@ -6057,19 +6057,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\intel-nuc2\\.nuget\\packages\\": {}
+    "C:\\Users\\rodri\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\intel-nuc2\\OneDrive\\Documentos\\airFlux\\VisualCode\\TodoApi\\TodoApi.csproj",
+      "projectUniqueName": "F:\\Documentos\\GitHub\\dotnetcore-airflux-ocean-api\\TodoApi.csproj",
       "projectName": "TodoApi",
-      "projectPath": "C:\\Users\\intel-nuc2\\OneDrive\\Documentos\\airFlux\\VisualCode\\TodoApi\\TodoApi.csproj",
-      "packagesPath": "C:\\Users\\intel-nuc2\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\intel-nuc2\\OneDrive\\Documentos\\airFlux\\VisualCode\\TodoApi\\obj\\",
+      "projectPath": "F:\\Documentos\\GitHub\\dotnetcore-airflux-ocean-api\\TodoApi.csproj",
+      "packagesPath": "C:\\Users\\rodri\\.nuget\\packages\\",
+      "outputPath": "F:\\Documentos\\GitHub\\dotnetcore-airflux-ocean-api\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\intel-nuc2\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\rodri\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
@@ -6087,6 +6087,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -6117,6 +6122,24 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[7.0.20, 7.0.20]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[7.0.20, 7.0.20]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[7.0.20, 7.0.20]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[7.0.20, 7.0.20]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -6125,7 +6148,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303\\RuntimeIdentifierGraph.json"
       }
     }
   }
