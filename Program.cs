@@ -131,6 +131,7 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
             Lat = todoItemDTO.Lat,
             Lon = todoItemDTO.Lon,
             Env = todoItemDTO.Env,
+            Priv = todoItemDTO.Priv,
             Tem = todoItemDTO.Tem,
             Pre = todoItemDTO.Pre,
             Hum = todoItemDTO.Hum,
@@ -158,6 +159,7 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
         todo.Lat = todoItemDTO.Lat;
         todo.Lon = todoItemDTO.Lon;
         todo.Env = todoItemDTO.Env;
+        todo.Priv = todoItemDTO.Priv;
         todo.Tem = todoItemDTO.Tem;
         todo.Pre = todoItemDTO.Pre;
         todo.Hum = todoItemDTO.Hum;
