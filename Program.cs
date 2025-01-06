@@ -29,6 +29,8 @@ builder.Services.Configure<JsonOptions>(options =>
 builder.Services.AddHttpClient();
 var app = builder.Build();
 
+app.UseCors("AllowAll");
+
 //our custom middleware extension to call UseMiddleware
 app.UseMiddleware<ApiKeyMiddleware>();
 
