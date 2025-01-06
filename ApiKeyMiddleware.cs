@@ -18,7 +18,7 @@ public class ApiKeyMiddleware
         }
 
         var appSettings = context.RequestServices.GetService<IConfiguration>();
-
+        
         if (appSettings == null)
         {
             context.Response.StatusCode = 500; // Internal Server Error
@@ -27,14 +27,15 @@ public class ApiKeyMiddleware
         }
 
         var apiKey = appSettings.GetValue<string>(APIKEY);
-
+        
         if (apiKey == null || !apiKey.Equals(extractedApiKey))
         {
             context.Response.StatusCode = 401;
             await context.Response.WriteAsync("The authentication key is incorrect : Unauthorized access");
             return;
         }
-
+        
         await _next(context);
     }
 }
+
