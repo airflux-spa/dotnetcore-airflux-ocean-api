@@ -138,7 +138,7 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
             Pm10 = todoItemDTO.Pm10,
             Pm25 = todoItemDTO.Pm25,
             Riesgo = todoItemDTO.Riesgo,
-            Aqi = todoItemDTO.Aqi,
+            //Aqi = todoItemDTO.Aqi,
             Datet = todoItemDTO.Datet,
         };
 
@@ -166,7 +166,7 @@ static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db
         todo.Pm10 = todoItemDTO.Pm10;
         todo.Pm25 = todoItemDTO.Pm25;
         todo.Riesgo = todoItemDTO.Riesgo;
-        todo.Aqi = todoItemDTO.Aqi;
+        //todo.Aqi = todoItemDTO.Aqi;
         todo.Datet = todoItemDTO.Datet;
 
         await db.SaveChangesAsync();
