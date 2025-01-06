@@ -5,20 +5,42 @@ using Microsoft.Azure.Devices.Client;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 
-
 var builder = WebApplication.CreateBuilder(args);
+
+// Configuración de CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
+// Configuración de la base de datos en memoria
 builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.Configure<JsonOptions>(options =>
 {
-    // Set this to true to ignore null or default values
+    // Ignorar valores nulos o por defecto
     options.SerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
 });
 builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
-//our custom middleware extension to call UseMiddleware
+// Configuración del pipeline de solicitudes
+app.UseRouting();
+
+// Habilita CORS antes del middleware de autenticación
+app.UseCors("AllowAll");
+
+// Middleware de clave API
 app.UseMiddleware<ApiKeyMiddleware>();
+
+app.UseAuthorization();
 
 RouteGroupBuilder todoItems = app.MapGroup("/todoitems");
 RouteGroupBuilder todoItems2 = app.MapGroup("/todoitems2");
@@ -35,6 +57,7 @@ interior.MapGet("/", GetInterior);
 exterior.MapGet("/", GetExterior);
 
 app.Run();
+
 
 static async Task<IResult> GetExterior(TodoDb db)
 {
