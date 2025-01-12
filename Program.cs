@@ -207,11 +207,16 @@ static async Task<IResult> DeleteTodo(int id, TodoDb db)
 
 static async Task<IResult> GetThingSpeakData(TodoDb db)
 {
-    var todos = await db.Todos.Select(x => new
-    {
-        Tschannel = x.Tschannel,
-        Apikey = x.Apikey
-    }).ToArrayAsync();
+    var oneHourAgo = DateTime.Now.AddHours(-2); // Calcula el tiempo límite de la última hora
+
+    var todos = await db.Todos
+        .Where(x => x.Env == 0 && x.Priv == 0 && x.Datet >= oneHourAgo)
+        .Select(x => new
+        {
+            Tschannel = x.Tschannel,
+            Apikey = x.Apikey,
+			Datet = x.Datet
+        }).ToArrayAsync();
 
     return TypedResults.Ok(todos);
 }
