@@ -207,7 +207,7 @@ static async Task<IResult> DeleteTodo(int id, TodoDb db)
 
 static async Task<IResult> GetThingSpeakData(TodoDb db)
 {
-    var oneHourAgo = DateTime.Now.AddHours(-1); // Calcula el tiempo límite de la última hora
+    var oneHourAgo = DateTime.Now.AddHours(-24); // Calcula el tiempo límite de la última hora
 
     var todos = await db.Todos
         .Where(x => x.Env == 0 && x.Priv == 0 && x.Datet >= oneHourAgo)
