@@ -213,8 +213,10 @@ static async Task<IResult> GetThingSpeakData(TodoDb db)
         .Where(x => x.Env == 0 && x.Priv == 0 && x.Datet >= oneHourAgo)
         .Select(x => new TodoItemDTO
         {
+            Id = x.Id,
             Tschannel = x.Tschannel,
             Apikey = x.Apikey
+
         }).ToArrayAsync();
 
     return TypedResults.Ok(todos);
