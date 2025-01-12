@@ -215,7 +215,12 @@ static async Task<IResult> GetThingSpeakData(TodoDb db)
         {
             Id = x.Id,
             Tschannel = x.Tschannel,
-            Apikey = x.Apikey
+            Apikey = x.Apikey,
+            Lat = x.Lat,
+            Lon = x.Lon,
+            Env = x.Env,
+            Priv = x.Priv,
+            Datet = x.Datet
 
         }).ToArrayAsync();
 
