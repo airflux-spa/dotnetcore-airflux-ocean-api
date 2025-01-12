@@ -48,6 +48,9 @@ todoItems2.MapGet("/", GetAllTodoswtime);
 interior.MapGet("/", GetInterior);
 exterior.MapGet("/", GetExterior);
 
+RouteGroupBuilder thingspeak = app.MapGroup("/thingspeak");
+thingspeak.MapGet("/", GetThingSpeakData);
+
 app.Run();
 
 static async Task<IResult> GetExterior(TodoDb db)
@@ -202,3 +205,13 @@ static async Task<IResult> DeleteTodo(int id, TodoDb db)
     return TypedResults.NotFound();
 }
 
+static async Task<IResult> GetThingSpeakData(TodoDb db)
+{
+    var todos = await db.Todos.Select(x => new
+    {
+        Tschannel = x.Tschannel,
+        Apikey = x.Apikey
+    }).ToArrayAsync();
+
+    return TypedResults.Ok(todos);
+}
