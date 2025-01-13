@@ -27,7 +27,7 @@ public class EncryptionHelper
                 {
                     using (StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
                     {
-                        streamWriter.Write("TEST123456789ABCDEFGHIJK"); // Agregar 10 caracteres de prueba
+                        streamWriter.Write("TEST123456789ABC"); // Agregar 10 caracteres de prueba
                         streamWriter.Write(plainText);
                     }
                     array = memoryStream.ToArray();
