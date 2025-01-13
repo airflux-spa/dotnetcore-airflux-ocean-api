@@ -235,7 +235,6 @@ static async Task<IResult> GetThingSpeakData(TodoDb db)
     string jsonData = JsonSerializer.Serialize(todos);
     string encryptedData = EncryptionHelper.EncryptString(jsonData);
 
-    // Devolver la respuesta como texto sin formato
-    return Results.Text(encryptedData, "text/plain");
+    return TypedResults.Ok(encryptedData);
 }
 
