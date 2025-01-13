@@ -29,6 +29,9 @@ builder.Services.Configure<JsonOptions>(options =>
 builder.Services.AddHttpClient();
 var app = builder.Build();
 
+app.UseHttpsRedirection(); // Redirige HTTP a HTTPS, si es necesario
+app.UseRouting(); // Habilita el enrutamiento de solicitudes
+
 app.UseCors("AllowAll");
 
 //our custom middleware extension to call UseMiddleware
