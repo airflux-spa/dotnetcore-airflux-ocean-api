@@ -2,8 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Json;
 using System.Text;
 using Microsoft.Azure.Devices.Client;
-using Newtonsoft.Json;
+//using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
+using System.Text.Json; // Asegúrate de tener esta referencia
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -230,6 +231,10 @@ static async Task<IResult> GetThingSpeakData(TodoDb db)
 
         }).ToArrayAsync();
 
-    return TypedResults.Ok(todos);
+    //return TypedResults.Ok(todos);
+    string jsonData = JsonSerializer.Serialize(todos);
+    string encryptedData = EncryptionHelper.EncryptString(jsonData);
+
+    return TypedResults.Ok(encryptedData);
 }
 
