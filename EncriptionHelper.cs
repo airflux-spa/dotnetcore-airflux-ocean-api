@@ -5,17 +5,19 @@ using System.Text;
 
 public class EncryptionHelper
 {
-    private static readonly string EncryptionKey = "X1c2Y3z4V5w6L7k8N9j0F1g2T3h4B5v8"; // Debe ser una clave secreta segura
+    private static readonly string EncryptionKey = "X1c2Y3z4V5w6L7k8N9j0F1g2T3h4B5v8"; // Clave de 32 caracteres para 256 bits
+    private static readonly byte[] Iv = Encoding.UTF8.GetBytes("abcdefghijklmnop"); // IV de 16 bytes
 
     public static string EncryptString(string plainText)
     {
-        byte[] iv = new byte[16];
         byte[] array;
 
         using (Aes aes = Aes.Create())
         {
             aes.Key = Encoding.UTF8.GetBytes(EncryptionKey);
-            aes.IV = iv;
+            aes.IV = Iv;
+            aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
 
             ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
 
