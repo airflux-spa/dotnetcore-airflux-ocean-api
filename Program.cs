@@ -217,7 +217,7 @@ static async Task<IResult> GetThingSpeakData(TodoDb db)
     var oneHourAgo = DateTime.Now.AddHours(-24); // Calcula el tiempo límite de las últimas 24 horas
 
     var todos = await db.Todos
-        .Where(x => x.Env == 0 && x.Priv == 0 && x.Datet >= oneHourAgo)
+        .Where(x => x.Env == 0 && x.Priv == 0 && x.Datet >= oneHourAgo && x.Tschannel != null && x.Apikey != null)
         .Select(x => new TodoItemDTO
         {
             // Id = x.Id,
