@@ -232,9 +232,11 @@ static async Task<IResult> GetThingSpeakData(TodoDb db)
         }).ToArrayAsync();
 
     //return TypedResults.Ok(todos);
-    string jsonData = JsonSerializer.Serialize(todos);
-    string encryptedData = EncryptionHelper.EncryptString(jsonData);
 
+    // Encriptar directamente el array de objetos
+    string encryptedData = EncryptionHelper.EncryptObject(todos);
+
+    // Devolver la respuesta encriptada
     return TypedResults.Ok(encryptedData);
 }
 
