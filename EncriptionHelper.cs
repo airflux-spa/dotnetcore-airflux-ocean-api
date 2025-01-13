@@ -6,12 +6,17 @@ using System.Text.Json;
 
 public class EncryptionHelper
 {
-    private static readonly string EncryptionKey = "X1c2Y3z4V5w6L7k8N9j0F1g2T3h4B5v8"; // Clave de 32 caracteres para 256 bits
+    private static readonly string EncryptionKey = "X1c2Y3z4V5w6L7k8N9j0F1g2T3h4B5v6"; // Clave de 32 caracteres para 256 bits
     private static readonly byte[] Iv = Encoding.UTF8.GetBytes("abcdefghijklmnop"); // IV de 16 bytes
 
     public static string EncryptObject<T>(T plainObject)
     {
-        string plainText = JsonSerializer.Serialize(plainObject);
+        var options = new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        };
+        
+        string plainText = JsonSerializer.Serialize(plainObject, options);
         byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
 
         using (Aes aes = Aes.Create())
