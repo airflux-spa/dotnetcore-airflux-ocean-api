@@ -52,7 +52,7 @@ todoItems2.MapGet("/", GetAllTodoswtime);
 interior.MapGet("/", GetInterior);
 exterior.MapGet("/", GetExterior);
 
-RouteGroupBuilder thingspeak = app.MapGroup("/thingspeak");
+RouteGroupBuilder thingspeak = app.MapGroup("/feeds");
 thingspeak.MapGet("/", GetThingSpeakData);
 
 // RouteGroupBuilder thingspeak2 = app.MapGroup("/thingspeak2");
