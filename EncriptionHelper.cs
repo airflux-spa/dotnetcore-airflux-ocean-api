@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 
 public class EncryptionHelper
 {
@@ -28,6 +27,7 @@ public class EncryptionHelper
                 {
                     using (StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
                     {
+                        streamWriter.Write("TEST123456"); // Agregar 10 caracteres de prueba
                         streamWriter.Write(plainText);
                     }
                     array = memoryStream.ToArray();
@@ -36,16 +36,5 @@ public class EncryptionHelper
         }
 
         return Convert.ToBase64String(array);
-    }
-
-    public static string EncryptObject<T>(T plainObject)
-    {
-        var options = new JsonSerializerOptions
-        {
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-        };
-        
-        string plainText = JsonSerializer.Serialize(plainObject, options);
-        return EncryptString(plainText);
     }
 }

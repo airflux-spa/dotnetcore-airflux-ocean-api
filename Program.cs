@@ -233,8 +233,13 @@ static async Task<IResult> GetThingSpeakData(TodoDb db)
 
     //return TypedResults.Ok(todos);
 
-    // Encriptar directamente el array de objetos
-    string encryptedData = EncryptionHelper.EncryptObject(todos);
+    // Encriptar directamente el array de objetos excluyendo los elementos nulos
+    var options = new JsonSerializerOptions
+    {
+        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+    };
+    string jsonData = JsonSerializer.Serialize(todos, options);
+    string encryptedData = EncryptionHelper.EncryptString(jsonData);
 
     // Devolver la respuesta encriptada
     return TypedResults.Ok(encryptedData);
