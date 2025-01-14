@@ -2,9 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Json;
 using System.Text;
 using Microsoft.Azure.Devices.Client;
-//using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
-using System.Text.Json; // Asegúrate de tener esta referencia
+using System.Text.Json; // Asegúrate de tener esta referenciausing System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,6 +55,9 @@ exterior.MapGet("/", GetExterior);
 
 RouteGroupBuilder thingspeak = app.MapGroup("/feeds");
 thingspeak.MapGet("/", GetThingSpeakData);
+
+RouteGroupBuilder thingspeak2 = app.MapGroup("/feeds2");
+thingspeak2.MapGet("/", GetThingSpeakData2);
 
 app.Run();
 
@@ -240,4 +244,56 @@ static async Task<IResult> GetThingSpeakData(TodoDb db)
 
     // Devolver la respuesta encriptada
     return TypedResults.Ok(encryptedData);
+}
+
+static async Task<IResult> GetThingSpeakData2(TodoDb db, IHttpClientFactory httpClientFactory)
+{
+    var twoDaysAgo = DateTime.Now.AddDays(-2);
+    var apiUrlBase = "https://api.thingspeak.com/channels";
+    var apiKeyField4 = "/fields/4.json?api_key=";
+    var apiKeyField5 = "/fields/5.json?api_key=";
+    var apiEnd = "&days=2&average=60";
+
+    var sensorDataList = new List<SensorDataDTO>();
+
+    // Obtén las entradas de la base de datos
+    var sensors = await db.Todos
+        .Where(x => x.Env == 0 && x.Priv == 0 && x.Datet >= twoDaysAgo && x.Tschannel != null && x.Apikey != null)
+        .Select(x => new { x.Tschannel, x.Apikey })
+        .ToListAsync();
+
+    foreach (var sensor in sensors)
+    {
+        var client = httpClientFactory.CreateClient();
+
+        // Obtener valores de field4 (mp10)
+        var field4Url = $"{apiUrlBase}/{sensor.Tschannel}{apiKeyField4}{sensor.Apikey}{apiEnd}";
+        var field4Response = await client.GetStringAsync(field4Url);
+        var field4Data = JsonSerializer.Deserialize<ThingSpeakResponse>(field4Response);
+
+        // Obtener valores de field5 (mp25)
+        var field5Url = $"{apiUrlBase}/{sensor.Tschannel}{apiKeyField5}{sensor.Apikey}{apiEnd}";
+        var field5Response = await client.GetStringAsync(field5Url);
+        var field5Data = JsonSerializer.Deserialize<ThingSpeakResponse>(field5Response);
+
+        if (field4Data?.Feeds != null && field5Data?.Feeds != null)
+        {
+            foreach (var feed in field4Data.Feeds)
+            {
+                var correspondingMp25 = field5Data.Feeds.FirstOrDefault(f => f.CreatedAt == feed.CreatedAt);
+
+                if (DateTime.TryParse(feed.CreatedAt, out DateTime timestamp))
+                {
+                    sensorDataList.Add(new SensorDataDTO
+                    {
+                        Timestamp = timestamp,
+                        Mp10 = double.TryParse(feed.Field4, out double mp10) ? mp10 : (double?)null,
+                        Mp25 = correspondingMp25 != null && double.TryParse(correspondingMp25.Field5, out double mp25) ? mp25 : (double?)null
+                    });
+                }
+            }
+        }
+    }
+
+    return TypedResults.Ok(sensorDataList);
 }
