@@ -278,7 +278,7 @@ static async Task<IResult> GetThingSpeakData2(TodoDb db, IHttpClientFactory http
         var field5Data = JsonSerializer.Deserialize<ThingSpeakResponse>(field5Response, options);
 
         // Serializar nuevamente la respuesta sin caracteres de escape adicionales
-        var reserializedResponse = JsonSerializer.Serialize(field5Data, options);
+        var reserializedResponse = JsonSerializer.Serialize(field5Data);
 
         // Almacenar la respuesta completa en el campo Mp25
         sensorDataList.Add(new SensorDataDTO
