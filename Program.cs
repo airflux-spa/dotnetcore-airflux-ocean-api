@@ -276,13 +276,17 @@ static async Task<IResult> GetThingSpeakData2(TodoDb db, IHttpClientFactory http
         // Crear un objeto ThingSpeakResponse manualmente
         var field5Data = new ThingSpeakResponse
         {
-            Feeds = root.GetProperty("feeds").EnumerateArray().Select(feed => new Feed
+            Feeds = root.GetProperty("feeds").EnumerateArray().Select(feed =>
             {
-                CreatedAt = feed.GetProperty("created_at").GetString(),
-                // Field1 = feed.TryGetProperty("field1", out JsonElement field1) ? field1.GetString() : null,
-                // Field3 = feed.TryGetProperty("field3", out JsonElement field3) ? field3.GetString() : null,
-                // Field4 = feed.TryGetProperty("field4", out JsonElement field4) ? field4.GetString() : null,
-                // Field5 = feed.TryGetProperty("field5", out JsonElement field5) ? field5.GetString() : null
+                var createdAt = feed.TryGetProperty("created_at", out JsonElement createdAtElement)
+                    ? createdAtElement.GetString()
+                    : null;
+
+                return new Feed
+                {
+                    CreatedAt = createdAt,
+                    // Los otros campos pueden ser agregados de manera similar
+                };
             }).ToList()
         };
 
