@@ -250,8 +250,7 @@ static async Task<IResult> GetThingSpeakData2(TodoDb db, IHttpClientFactory http
 {
     var twoDaysAgo = DateTime.Now.AddDays(-2);
     var apiUrlBase = "https://api.thingspeak.com/channels";
-    var apiKeyField4 = "/fields/4.json?api_key=";
-    var apiKeyField5 = "/fields/5.json?api_key=";
+    var apiKeyField5 = "/feeds.json?api_key=";
     var apiEnd = "&days=2&average=60";
 
     var sensorDataList = new List<SensorDataDTO>();
