@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using System.Text.Json; // Asegúrate de tener esta referenciausing System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using System.Text.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -270,78 +269,12 @@ static async Task<IResult> GetThingSpeakData2(TodoDb db, IHttpClientFactory http
         var field5Url = $"{apiUrlBase}/{sensor.Tschannel}{apiKeyField5}{sensor.Apikey}{apiEnd}";
         var field5Response = await client.GetStringAsync(field5Url);
 
-        // Deserializar la respuesta JSON
-        var options = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = true
-        };
-        var field5Data = JsonSerializer.Deserialize<ThingSpeakResponse>(field5Response, options);
-
-
-        // Filtrar y mantener solo el campo created_at
-        var filteredFeeds = field5Data?.Feeds.Select(feed => new { feed.CreatedAt }).ToList();
-        var filteredData = new { Feeds = filteredFeeds };
-
-        // Serializar nuevamente la respuesta sin caracteres de escape adicionales
-        var reserializedResponse = JsonSerializer.Serialize(filteredData, options);
-
-
         // Almacenar la respuesta completa en el campo Mp25
         sensorDataList.Add(new SensorDataDTO
         {
-            Mp25 = reserializedResponse
+            Mp25 = field5Response
         });
     }
 
     return TypedResults.Ok(sensorDataList);
 }
-
-public class ThingSpeakChannel
-{
-    [JsonPropertyName("id")]
-    public int Id { get; set; }
-    [JsonPropertyName("name")]
-    public string? Name { get; set; }
-    [JsonPropertyName("latitude")]
-    public string? Latitude { get; set; }
-    [JsonPropertyName("longitude")]
-    public string? Longitude { get; set; }
-    [JsonPropertyName("field1")]
-    public string? Field1 { get; set; }
-    [JsonPropertyName("field3")]
-    public string? Field3 { get; set; }
-    [JsonPropertyName("field4")]
-    public string? Field4 { get; set; }
-    [JsonPropertyName("field5")]
-    public string? Field5 { get; set; }
-    [JsonPropertyName("created_at")]
-    public string? CreatedAt { get; set; }
-    [JsonPropertyName("updated_at")]
-    public string? UpdatedAt { get; set; }
-    [JsonPropertyName("last_entry_id")]
-    public int LastEntryId { get; set; }
-}
-
-public class ThingSpeakResponse
-{
-    [JsonPropertyName("channel")]
-    public ThingSpeakChannel? Channel { get; set; }
-    [JsonPropertyName("feeds")]
-    public List<Feed> Feeds { get; set; } = new List<Feed>();
-}
-
-public class Feed
-{
-    [JsonPropertyName("created_at")]
-    public string? CreatedAt { get; set; }
-    [JsonPropertyName("field1")]
-    public double? Field1 { get; set; }
-    [JsonPropertyName("field3")]
-    public double? Field3 { get; set; }
-    [JsonPropertyName("field4")]
-    public double? Field4 { get; set; }
-    [JsonPropertyName("field5")]
-    public double? Field5 { get; set; }
-}
-
