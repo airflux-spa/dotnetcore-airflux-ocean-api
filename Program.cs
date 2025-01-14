@@ -9,16 +9,16 @@ using System.Text.Json; // Asegúrate de tener esta referencia
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-        });
-});
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy("AllowAll",
+//         builder =>
+//         {
+//             builder.AllowAnyOrigin()
+//                    .AllowAnyMethod()
+//                    .AllowAnyHeader();
+//         });
+// });
 
 builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -33,7 +33,7 @@ var app = builder.Build();
 app.UseHttpsRedirection(); // Redirige HTTP a HTTPS, si es necesario
 app.UseRouting(); // Habilita el enrutamiento de solicitudes
 
-app.UseCors("AllowAll");
+//app.UseCors("AllowAll");
 
 //our custom middleware extension to call UseMiddleware
 app.UseMiddleware<ApiKeyMiddleware>();
@@ -54,12 +54,6 @@ exterior.MapGet("/", GetExterior);
 
 RouteGroupBuilder thingspeak = app.MapGroup("/feeds");
 thingspeak.MapGet("/", GetThingSpeakData);
-
-RouteGroupBuilder thingspeak2 = app.MapGroup("/feeds2");
-thingspeak2.MapGet("/", GetThingSpeakData2);
-
-// RouteGroupBuilder thingspeak2 = app.MapGroup("/thingspeak2");
-// thingspeak2.MapGet("/", GetThingSpeakData2);
 
 app.Run();
 
@@ -247,27 +241,3 @@ static async Task<IResult> GetThingSpeakData(TodoDb db)
     // Devolver la respuesta encriptada
     return TypedResults.Ok(encryptedData);
 }
-
-static async Task<IResult> GetThingSpeakData2(TodoDb db)
-{
-    var oneHourAgo = DateTime.Now.AddHours(-24); // Calcula el tiempo límite de las últimas 24 horas
-
-    var todos = await db.Todos
-        .Where(x => x.Env == 0 && x.Priv == 0 && x.Datet >= oneHourAgo && x.Tschannel != null && x.Apikey != null)
-        .Select(x => new TodoItemDTO
-        {
-            // Id = x.Id,
-            Tschannel = x.Tschannel,
-            Apikey = x.Apikey,
-            // Lat = x.Lat,
-            // Lon = x.Lon,
-            // Env = x.Env,
-            // Priv = x.Priv,
-            // Datet = x.Datet
-
-        }).ToArrayAsync();
-
-    return TypedResults.Ok(todos);
-
-}
-
