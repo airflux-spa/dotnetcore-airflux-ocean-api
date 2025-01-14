@@ -269,33 +269,10 @@ static async Task<IResult> GetThingSpeakData2(TodoDb db, IHttpClientFactory http
         var field5Url = $"{apiUrlBase}/{sensor.Tschannel}{apiKeyField5}{sensor.Apikey}{apiEnd}";
         var field5Response = await client.GetStringAsync(field5Url);
 
-        // Usar JsonDocument para analizar la respuesta JSON
-        using JsonDocument document = JsonDocument.Parse(field5Response);
-        JsonElement root = document.RootElement;
-
-        // Crear un objeto ThingSpeakResponse manualmente
-        var field5Data = new ThingSpeakResponse
-        {
-            Feeds = root.GetProperty("feeds").EnumerateArray().Select(feed =>
-            {
-                var createdAt = feed.TryGetProperty("created_at", out JsonElement createdAtElement)
-                    ? createdAtElement.GetString()
-                    : null;
-
-                return new Feed
-                {
-                    CreatedAt = createdAt,
-                    // Los otros campos pueden ser agregados de manera similar
-                };
-            }).ToList()
-        };
-
-        // Serializar nuevamente la respuesta
-        var reserializedResponse = JsonSerializer.Serialize(field5Data);
         // Almacenar la respuesta completa en el campo Mp25
         sensorDataList.Add(new SensorDataDTO
         {
-            Mp25 = reserializedResponse
+            Mp25 = field5Response
         });
     }
 
