@@ -269,17 +269,25 @@ static async Task<IResult> GetThingSpeakData2(TodoDb db, IHttpClientFactory http
         var field5Url = $"{apiUrlBase}/{sensor.Tschannel}{apiKeyField5}{sensor.Apikey}{apiEnd}";
         var field5Response = await client.GetStringAsync(field5Url);
 
-        // Deserializar la respuesta JSON
-        var options = new JsonSerializerOptions
+        // Usar JsonDocument para analizar la respuesta JSON
+        using JsonDocument document = JsonDocument.Parse(field5Response);
+        JsonElement root = document.RootElement;
+
+        // Crear un objeto ThingSpeakResponse manualmente
+        var field5Data = new ThingSpeakResponse
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = true
+            Feeds = root.GetProperty("feeds").EnumerateArray().Select(feed => new Feed
+            {
+                CreatedAt = feed.GetProperty("created_at").GetString(),
+                Field1 = feed.TryGetProperty("field1", out JsonElement field1) ? field1.GetString() : null,
+                Field3 = feed.TryGetProperty("field3", out JsonElement field3) ? field3.GetString() : null,
+                Field4 = feed.TryGetProperty("field4", out JsonElement field4) ? field4.GetString() : null,
+                Field5 = feed.TryGetProperty("field5", out JsonElement field5) ? field5.GetString() : null
+            }).ToList()
         };
-        var field5Data = JsonSerializer.Deserialize<ThingSpeakResponse>(field5Response, options);
 
-        // Serializar nuevamente la respuesta sin caracteres de escape adicionales
+        // Serializar nuevamente la respuesta
         var reserializedResponse = JsonSerializer.Serialize(field5Data);
-
         // Almacenar la respuesta completa en el campo Mp25
         sensorDataList.Add(new SensorDataDTO
         {
