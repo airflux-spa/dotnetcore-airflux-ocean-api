@@ -10,9 +10,9 @@ public class ThingSpeakResponse
 
 public class Feed
 {
-    public DateTime? CreatedAt { get; set; }
-    public int? Field1 { get; set; }
-    public int? Field3 { get; set; }
-    public int? Field4 { get; set; }
-    public int? Field5 { get; set; }
+    public string? CreatedAt { get; set; }
+    public string? Field1 { get; set; }
+    public string? Field3 { get; set; }
+    public string? Field4 { get; set; }
+    public string? Field5 { get; set; }
 }

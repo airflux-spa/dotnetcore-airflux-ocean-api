@@ -278,11 +278,11 @@ static async Task<IResult> GetThingSpeakData2(TodoDb db, IHttpClientFactory http
         {
             Feeds = root.GetProperty("feeds").EnumerateArray().Select(feed => new Feed
             {
-                CreatedAt = feed.GetProperty("created_at").GetDateTime(),
-                Field1 = feed.TryGetProperty("field1", out JsonElement field1) ? (int)field1.GetDouble() : (int?)null,
-                Field3 = feed.TryGetProperty("field3", out JsonElement field3) ? (int)field3.GetDouble() : (int?)null,
-                Field4 = feed.TryGetProperty("field4", out JsonElement field4) ? (int)field4.GetDouble() : (int?)null,
-                Field5 = feed.TryGetProperty("field5", out JsonElement field5) ? (int)field5.GetDouble() : (int?)null
+                CreatedAt = feed.GetProperty("created_at").GetString(),
+                // Field1 = feed.TryGetProperty("field1", out JsonElement field1) ? field1.GetString() : null,
+                // Field3 = feed.TryGetProperty("field3", out JsonElement field3) ? field3.GetString() : null,
+                // Field4 = feed.TryGetProperty("field4", out JsonElement field4) ? field4.GetString() : null,
+                // Field5 = feed.TryGetProperty("field5", out JsonElement field5) ? field5.GetString() : null
             }).ToList()
         };
 
