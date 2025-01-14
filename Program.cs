@@ -262,38 +262,38 @@ static async Task<IResult> GetThingSpeakData2(TodoDb db, IHttpClientFactory http
         .Select(x => new { x.Tschannel, x.Apikey })
         .ToListAsync();
 
-    foreach (var sensor in sensors)
-    {
-        var client = httpClientFactory.CreateClient();
+    // foreach (var sensor in sensors)
+    // {
+    //     var client = httpClientFactory.CreateClient();
 
-        // Obtener valores de field4 (mp10)
-        var field4Url = $"{apiUrlBase}/{sensor.Tschannel}{apiKeyField4}{sensor.Apikey}{apiEnd}";
-        var field4Response = await client.GetStringAsync(field4Url);
-        var field4Data = JsonSerializer.Deserialize<ThingSpeakResponse>(field4Response);
+    //     // Obtener valores de field4 (mp10)
+    //     var field4Url = $"{apiUrlBase}/{sensor.Tschannel}{apiKeyField4}{sensor.Apikey}{apiEnd}";
+    //     var field4Response = await client.GetStringAsync(field4Url);
+    //     var field4Data = JsonSerializer.Deserialize<ThingSpeakResponse>(field4Response);
 
-        // Obtener valores de field5 (mp25)
-        var field5Url = $"{apiUrlBase}/{sensor.Tschannel}{apiKeyField5}{sensor.Apikey}{apiEnd}";
-        var field5Response = await client.GetStringAsync(field5Url);
-        var field5Data = JsonSerializer.Deserialize<ThingSpeakResponse>(field5Response);
+    //     // Obtener valores de field5 (mp25)
+    //     var field5Url = $"{apiUrlBase}/{sensor.Tschannel}{apiKeyField5}{sensor.Apikey}{apiEnd}";
+    //     var field5Response = await client.GetStringAsync(field5Url);
+    //     var field5Data = JsonSerializer.Deserialize<ThingSpeakResponse>(field5Response);
 
-        if (field4Data?.Feeds != null && field5Data?.Feeds != null)
-        {
-            foreach (var feed in field4Data.Feeds)
-            {
-                var correspondingMp25 = field5Data.Feeds.FirstOrDefault(f => f.CreatedAt == feed.CreatedAt);
+    //     if (field4Data?.Feeds != null && field5Data?.Feeds != null)
+    //     {
+    //         foreach (var feed in field4Data.Feeds)
+    //         {
+    //             var correspondingMp25 = field5Data.Feeds.FirstOrDefault(f => f.CreatedAt == feed.CreatedAt);
 
-                if (DateTime.TryParse(feed.CreatedAt, out DateTime timestamp))
-                {
-                    sensorDataList.Add(new SensorDataDTO
-                    {
-                        Timestamp = timestamp,
-                        Mp10 = double.TryParse(feed.Field4, out double mp10) ? mp10 : (double?)null,
-                        Mp25 = correspondingMp25 != null && double.TryParse(correspondingMp25.Field5, out double mp25) ? mp25 : (double?)null
-                    });
-                }
-            }
-        }
-    }
+    //             if (DateTime.TryParse(feed.CreatedAt, out DateTime timestamp))
+    //             {
+    //                 sensorDataList.Add(new SensorDataDTO
+    //                 {
+    //                     Timestamp = timestamp,
+    //                     Mp10 = double.TryParse(feed.Field4, out double mp10) ? mp10 : (double?)null,
+    //                     Mp25 = correspondingMp25 != null && double.TryParse(correspondingMp25.Field5, out double mp25) ? mp25 : (double?)null
+    //                 });
+    //             }
+    //         }
+    //     }
+    // }
 
-    return TypedResults.Ok(sensorDataList);
+    return TypedResults.Ok(sensors);
 }
