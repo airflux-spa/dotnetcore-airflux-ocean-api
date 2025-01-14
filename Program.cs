@@ -272,23 +272,13 @@ static async Task<IResult> GetThingSpeakData2(TodoDb db, IHttpClientFactory http
         // Deserializar la respuesta JSON
         var field5Data = JsonSerializer.Deserialize<ThingSpeakResponse>(field5Response);
 
-        // Filtrar los campos deseados
-        var filteredFeeds = field5Data?.Feeds.Select(feed => new
-        {
-            feed.CreatedAt,
-            feed.Field1,
-            feed.Field3,
-            feed.Field4,
-            feed.Field5
-        });
+        // Serializar nuevamente la respuesta
+        var reserializedResponse = JsonSerializer.Serialize(field5Data);
 
-        // Serializar la respuesta filtrada
-        var filteredResponse = JsonSerializer.Serialize(new { Feeds = filteredFeeds });
-
-        // Almacenar la respuesta filtrada en el campo Mp25
+        // Almacenar la respuesta completa en el campo Mp25
         sensorDataList.Add(new SensorDataDTO
         {
-            Mp25 = filteredResponse
+            Mp25 = reserializedResponse
         });
     }
 
