@@ -270,10 +270,15 @@ static async Task<IResult> GetThingSpeakData2(TodoDb db, IHttpClientFactory http
         var field5Response = await client.GetStringAsync(field5Url);
 
         // Deserializar la respuesta JSON
-        var field5Data = JsonSerializer.Deserialize<ThingSpeakResponse>(field5Response);
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true
+        };
+        var field5Data = JsonSerializer.Deserialize<ThingSpeakResponse>(field5Response, options);
 
-        // Serializar nuevamente la respuesta
-        var reserializedResponse = JsonSerializer.Serialize(field5Data);
+        // Serializar nuevamente la respuesta sin caracteres de escape adicionales
+        var reserializedResponse = JsonSerializer.Serialize(field5Data, options);
 
         // Almacenar la respuesta completa en el campo Mp25
         sensorDataList.Add(new SensorDataDTO
